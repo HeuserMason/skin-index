@@ -1,11 +1,7 @@
-import { useContext } from 'react';
 import SkinCard from './SkinCard';
-import ChampionsContext from '../context/champions';
 import { Layout, Row, Col } from 'antd';
 
-function SkinCardList() {
-
-    const { champions, selectedChampionId } = useContext(ChampionsContext);
+function SkinCardList({ champions, selectedChampionId}) {
 
     //Get champion object from selectChampionId in Context
     const championObject = champions.find((element) => {

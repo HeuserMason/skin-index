@@ -1,12 +1,11 @@
 import { useContext } from "react";
 import { Input } from "antd";
-import ChampionsContext from "../context/champions";
-const { Search } = Input
+const { Search } = Input;
 
-function ChampionSearch({ padding }) {
+function ChampionSearch({ currChampionSearchTerm, SetCurrChampionSearchTerm }) {
     
     //const [currChampionSearchTerm, SetCurrChampionSearchTerm] = useState("");
-    const { currChampionSearchTerm, SetCurrChampionSearchTerm } = useContext(ChampionsContext);
+    //const { currChampionSearchTerm, SetCurrChampionSearchTerm } = useContext(ChampionsContext);
 
     const handleSearchTermChange = (event) => {
 

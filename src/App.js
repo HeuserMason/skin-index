@@ -1,24 +1,35 @@
-import { useContext, useEffect } from 'react';
-import { Layout, Input, Menu, theme, Space} from 'antd';
-import ChampionsContext from './context/champions';
+import { useState, useEffect, useCallback } from 'react';
+import { Layout, Menu, theme, Space} from 'antd';
 import SkinCardList from './components/SkinCardList';
 import ChampionSearch from './components/ChampionSearch';
 import RoleSort from './components/RoleSort';
+import axios from 'axios';
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const App = () => {
-
-    const { champions, fetchChampions, currRoleSort, selectedChampionId, setSelectedChampionId, currChampionSearchTerm } = useContext(ChampionsContext);
 
     const {
         token: { colorBgContainer },
     } = theme.useToken();
 
+    const [champions, setChampion] = useState([]);
+    const [currRoleSort, SetCurrRoleSort] = useState("");
+    const [currChampionSearchTerm, SetCurrChampionSearchTerm] = useState("");
+    const [selectedChampionId, setSelectedChampionId] = useState('266'); //First element after alphabetically sorting
+    
+    const fetchChampions = useCallback(async () => {
+
+        const response = await axios.get('https://cdn.communitydragon.org/latest/champions');
+
+        setChampion(response.data);
+    }, []);
+
     //Fetch champions once
     useEffect(() => {
 
         fetchChampions();
-    }, [fetchChampions] );
+    }, [fetchChampions]);
 
     const itemsHeaderElements = [
 
@@ -77,9 +88,9 @@ const App = () => {
 
                     <Sider style={{ background: colorBgContainer, minHeight: 280, }} width={250}>
                         
-                        <Space block direction="vertical">
-                            <ChampionSearch />
-                            <RoleSort style={{ }} />
+                        <Space block="true" direction="vertical">
+                            <ChampionSearch currChampionSearchTerm={currChampionSearchTerm} SetCurrChampionSearchTerm={SetCurrChampionSearchTerm} />
+                            <RoleSort SetCurrRoleSort={SetCurrRoleSort} />
                         </Space>
                         <Space />
                         <div style={{ overflowX: 'hidden', overflowY: 'visable', height: '100vh', }}>
@@ -88,7 +99,7 @@ const App = () => {
                     </Sider>
                     
                     <Content style={{ padding: '0 24px', minHeight: 280, }}>
-                        <SkinCardList />
+                        <SkinCardList champions={champions} selectedChampionId={selectedChampionId}/>
                     </Content>
 
                 </Layout>

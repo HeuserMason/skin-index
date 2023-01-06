@@ -1,7 +1,6 @@
 import { useContext } from 'react';
 import { HolderOutlined} from '@ant-design/icons';
 import { Menu } from "antd";
-import ChampionsContext from '../context/champions';
 
 function getItem(label, key, icon, children, type) {
 
@@ -14,9 +13,7 @@ function getItem(label, key, icon, children, type) {
     };
 }
 
-function RoleSort() {
-
-    const { SetCurrRoleSort } = useContext(ChampionsContext);
+function RoleSort({ SetCurrRoleSort }) {
 
     const items = [
 
