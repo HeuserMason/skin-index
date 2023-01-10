@@ -1,10 +1,10 @@
-import { Layout, Menu, theme } from 'antd';
+import { Layout, theme } from 'antd';
 import SkinCardList from '../components/SkinCardList';
 import Sidebar from '../components/Sidebar';
 
-const { Header, Content, Footer } = Layout;
+const { Content } = Layout;
 
-function SkinIndex({ champions, selectedChampionId, SetSelectedChampionId}) {
+function SkinIndex({ champions, selectedChampionId, SetSelectedChampionId, SetSelectedSkinId}) {
 
     const {
         token: { colorBgContainer },
@@ -25,7 +25,7 @@ function SkinIndex({ champions, selectedChampionId, SetSelectedChampionId}) {
                     <Sidebar champions={champions} selectedChampionId={selectedChampionId} SetSelectedChampionId={SetSelectedChampionId}/>
                     
                     <Content style={{ padding: '0 24px', overflowY: 'visable', height: '100vh', }}>
-                        <SkinCardList champions={champions} selectedChampionId={selectedChampionId} />
+                        <SkinCardList champions={champions} selectedChampionId={selectedChampionId} SetSelectedSkinId={SetSelectedSkinId} />
                     </Content>
 
                 </Layout>

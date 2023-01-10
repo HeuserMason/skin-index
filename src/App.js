@@ -5,8 +5,9 @@ import axios from 'axios';
 import NavigationContext from './context/navigation';
 import Route from './components/Route';
 import SkinIndex from './pages/SkinIndex';
+import SkinInfo from './pages/SkinInfo';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Footer } = Layout;
 
 const App = () => {
 
@@ -14,14 +15,16 @@ const App = () => {
 
     const [champions, setChampions] = useState([]);
     const [selectedChampionId, SetSelectedChampionId] = useState('266'); //First element after alphabetically sorting
+    const [selectedSkinId, SetSelectedSkinId] = useState('');
     
     const fetchChampions = useCallback(async () => {
 
         const response = await axios.get('https://cdn.communitydragon.org/latest/champions');
+        //const response = await axios.get('http://ddragon.leagueoflegends.com/cdn/12.12.1/data/en_US/champion.json');
 
         setChampions(response.data);
 
-        console.log(response.data);
+        //console.log(response.data);
     }, []);
 
     //Fetch champions once
@@ -34,7 +37,7 @@ const App = () => {
 
         // Key acts as link destination here
         { key: "/", label: "SKINPEDIA"},
-        { key: "/championinfo", label: "CHAMPION INFORMATION"},
+        { key: "/skininfo", label: "SKIN INFORMATION"},
     ];
 
     const handleMenuLinkClick = (item, key, keyPath, domEvent) => {
@@ -50,7 +53,9 @@ const App = () => {
                 <div className="logo" />
                 <Menu theme="dark" mode="horizontal" selectedKeys={currentPath}
 
-                    onClick={handleMenuLinkClick} items={itemsHeaderElements.map((element, index) => {
+                    onClick={handleMenuLinkClick} items={itemsHeaderElements
+                        .filter((element, index) => { if (element.key === '/skininfo' && selectedSkinId === '') { return false } return true })
+                        .map((element, index) => {
 
                         return {
 
@@ -61,10 +66,16 @@ const App = () => {
             </Header>
 
             <Route path="/">             
-                <SkinIndex champions={champions} selectedChampionId={selectedChampionId} SetSelectedChampionId={SetSelectedChampionId} />
-            </Route>
-            <Route path="/championinfo">
+                <SkinIndex 
 
+                    champions={champions} 
+                    selectedChampionId={selectedChampionId} 
+                    SetSelectedChampionId={SetSelectedChampionId} 
+                    SetSelectedSkinId={SetSelectedSkinId}
+                />
+            </Route>
+            <Route path="/skininfo">
+                <SkinInfo champions={champions} selectedChampionId={selectedChampionId} selectedSkinId={selectedSkinId} />
             </Route>
 
             <Footer style={{ textAlign: 'center',}}>

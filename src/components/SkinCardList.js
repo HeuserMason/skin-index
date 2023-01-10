@@ -1,7 +1,11 @@
+import { useContext } from 'react';
 import SkinCard from './SkinCard';
 import { Layout, Row, Col } from 'antd';
+import NavigationContext from '../context/navigation';
 
-function SkinCardList({ champions, selectedChampionId}) {
+function SkinCardList({ champions, selectedChampionId, SetSelectedSkinId}) {
+
+    const { navigate } = useContext(NavigationContext);
 
     //Get champion object from selectChampionId in Context
     const championObject = champions.find((element) => {
@@ -15,6 +19,12 @@ function SkinCardList({ champions, selectedChampionId}) {
             <div>Loading...</div>
         );
     }
+
+    const handleCardClick = (event, skinId) => {
+
+        SetSelectedSkinId(skinId);
+        navigate("/skininfo");
+    };
 
     const mappedSkins = championObject.skins.filter((element, index) => {
 
@@ -31,7 +41,7 @@ function SkinCardList({ champions, selectedChampionId}) {
         return (
 
             <Col key={element.id} span={6} style={{ margin: 12 }}>
-                <SkinCard name={element.name} img={img} />
+                <SkinCard skinId={element.id} name={element.name} img={img} handleCardClick={handleCardClick} />
             </Col>
         );
     });
