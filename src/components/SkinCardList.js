@@ -26,9 +26,12 @@ function SkinCardList({ champions, selectedChampionId}) {
 
     }).map((element, index) => {
         
+        const img = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championObject.key}_${element.id}.jpg`;
+
         return (
-            <Col key={element.id} span={5} style={{ margin: 12 }}>
-                <SkinCard name={element.name} />
+
+            <Col key={element.id} span={6} style={{ margin: 12 }}>
+                <SkinCard name={element.name} img={img} />
             </Col>
         );
     });

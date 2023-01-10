@@ -1,28 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Layout, Menu, theme, Space} from 'antd';
-import SkinCardList from './components/SkinCardList';
-import ChampionSearch from './components/ChampionSearch';
-import RoleSort from './components/RoleSort';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { Layout, Menu, theme } from 'antd';
 import axios from 'axios';
 
-const { Header, Content, Footer, Sider } = Layout;
+import NavigationContext from './context/navigation';
+import Route from './components/Route';
+import SkinIndex from './pages/SkinIndex';
+
+const { Header, Content, Footer } = Layout;
 
 const App = () => {
 
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken();
+    const { currentPath, navigate } = useContext(NavigationContext);
 
-    const [champions, setChampion] = useState([]);
-    const [currRoleSort, SetCurrRoleSort] = useState("");
-    const [currChampionSearchTerm, SetCurrChampionSearchTerm] = useState("");
-    const [selectedChampionId, setSelectedChampionId] = useState('266'); //First element after alphabetically sorting
+    const [champions, setChampions] = useState([]);
+    const [selectedChampionId, SetSelectedChampionId] = useState('266'); //First element after alphabetically sorting
     
     const fetchChampions = useCallback(async () => {
 
         const response = await axios.get('https://cdn.communitydragon.org/latest/champions');
 
-        setChampion(response.data);
+        setChampions(response.data);
+
+        console.log(response.data);
     }, []);
 
     //Fetch champions once
@@ -33,30 +32,14 @@ const App = () => {
 
     const itemsHeaderElements = [
 
-        { label: "SHOP"},
-        { label: "HELP"},
-        { label: "MMR CHECKER"},
-        { label: "SKINPEDIA"},
+        // Key acts as link destination here
+        { key: "/", label: "SKINPEDIA"},
+        { key: "/championinfo", label: "CHAMPION INFORMATION"},
     ];
-    
-    const itemsSiderElements = champions.filter((element, index) => {
 
-        //Returned champion from GET request has a NONE entry at index 0, this removes that
-        if (index === 0 || !element.name.toLowerCase().includes(currChampionSearchTerm.toLowerCase()) || currRoleSort !== "" && !element.roles.includes(currRoleSort)) {
-            return false;
-        }
-        return true;
-        
-    //Alphabeticaly sort
-    }).sort((a, b) => a.name.localeCompare(b.name))
-    .map((element, index) => {
+    const handleMenuLinkClick = (item, key, keyPath, domEvent) => {
 
-        return { key: element.id, label: element.name }
-    });
-
-    const handleChampionClick = (item, key, keyPath, domEvent) => {
-
-        setSelectedChampionId(item.key);
+        navigate(item.key);
     };
 
     return (
@@ -65,45 +48,24 @@ const App = () => {
 
             <Header className="header">
                 <div className="logo" />
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']} items={itemsHeaderElements.map((element, index) => {
+                <Menu theme="dark" mode="horizontal" selectedKeys={currentPath}
 
-                    const key = index + 1;
-                    return {
+                    onClick={handleMenuLinkClick} items={itemsHeaderElements.map((element, index) => {
 
-                        key,
-                        label: element.label
-                    };
+                        return {
+
+                            key: element.key,
+                            label: element.label
+                        };
                 })}/>
             </Header>
 
-            <Content style={{ padding: '0 50px',}}>
+            <Route path="/">             
+                <SkinIndex champions={champions} selectedChampionId={selectedChampionId} SetSelectedChampionId={SetSelectedChampionId} />
+            </Route>
+            <Route path="/championinfo">
 
-                {/* <Breadcrumb style={{ margin: '16px 0',}}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
-                </Breadcrumb> */}
-
-                <Layout style={{ padding: '24px 0', background: colorBgContainer}}>
-
-                    <Sider style={{ background: colorBgContainer, minHeight: 280, }} width={250}>
-                        
-                        <Space block="true" direction="vertical">
-                            <ChampionSearch currChampionSearchTerm={currChampionSearchTerm} SetCurrChampionSearchTerm={SetCurrChampionSearchTerm} />
-                            <RoleSort SetCurrRoleSort={SetCurrRoleSort} />
-                        </Space>
-                        <Space />
-                        <div style={{ overflowX: 'hidden', overflowY: 'visable', height: '100vh', }}>
-                            <Menu onClick={handleChampionClick} mode="vertical" defaultSelectedKeys={selectedChampionId} defaultOpenKeys={['sub1']} style={{height: '100%',}} items={itemsSiderElements}/>
-                        </div>
-                    </Sider>
-                    
-                    <Content style={{ padding: '0 24px', minHeight: 280, }}>
-                        <SkinCardList champions={champions} selectedChampionId={selectedChampionId}/>
-                    </Content>
-
-                </Layout>
-            </Content>
+            </Route>
 
             <Footer style={{ textAlign: 'center',}}>
                 Ant Design ©2018 Created by Ant UED

@@ -1,11 +1,11 @@
 import { Card } from 'antd';
 const { Meta } = Card;
 
-function SkinCard({ name }) {
+function SkinCard({ name, img }) {
 
     return (
         <div>
-            <Card hoverable style={{ width: 340 }} cover={<img alt={name} src={"https://picsum.photos/seed/" + Math.floor(Math.random() * 500) + "/500"} />}>
+            <Card hoverable style={{ width: 340, }} cover={<img alt={name} src={img} />}>
                 <Meta title={name} description="975 RP"/>
             </Card>
         </div>
